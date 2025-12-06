@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Predicting Obesity & Walkability - ML Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; background: #fafaff; color: #222; }
+    h1 { margin-top: 1rem; }
+    h2, h3 { color: #31708E; margin-top: 1.75rem; }
+    a { color: #2262b1; text-decoration: underline; }
+    section { margin-bottom: 2rem; }
+    .divider { border-top: 1px solid #d1d5da; margin: 2rem 0; }
+    img { display: block; margin: 20px auto; max-width: 100%; border: 1px solid #ddd; border-radius: 8px; }
+    figcaption { text-align: center; font-size: 0.99rem; color: #555; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Predicting Obesity Prevalence Using Walkability Metrics via Machine Learning</h1>
+  <section>
+    <h2>Overview</h2>
+    <p>This study investigates the relationship between the built environment and adult obesity prevalence at the county level. The primary goal was to evaluate the predictive power of walkability metrics, such as the National Walkability Index and its components (land use mix, street connectivity, and transit access), on obesity rates using machine learning models.</p>
+  </section>
+  <section>
+    <h2>Data Utilized</h2>
+    <ul>
+      <li><b>CDC PLACES dataset (2021-2022 release):</b> County-level health outcomes, including adult obesity prevalence (<i>Data_Value</i>), for all 50 states.</li>
+      <li><b>EPA Smart Location Database (2019 data):</b> Walkability metrics, including the National Walkability Index (<i>NatWalkInd</i>) and its components (<i>D2A_Ranked, D2B_Ranked, D3B_Ranked, D4A_Ranked</i>) by census tract. Aggregated to county level and merged via custom LocationID.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Key Outcomes</h2>
+    <ul>
+      <li>Initial <b>Multiple Linear Regression</b> had limited predictive accuracy (R² ≈ 0.26, RMSE ≈ 3.65).</li>
+      <li>Upgraded to <b>Gradient Boosting Regressor</b>: R² ≈ 0.78, RMSE ≈ 1.99.</li>
+      <li><b>Employment Diversity Rank</b> and <b>Transit Access Rank</b> were most influential predictors, suggesting nonlinear and interactive effects.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Summary</h2>
+    <p>This project evaluated the predictive power of the National Walkability Index and its components on adult obesity rates, showing strong, nonlinear influence of walkability on public health. Machine learning (Gradient Boosting) markedly outperformed traditional linear regression approaches.</p>
+  </section>
+  <section>
+    <h2>Project Motivation</h2>
+    <p>The built environment shapes health behaviors and outcomes. Higher walkability - through mixed land use, density, and connectivity - promotes physical activity, potentially reducing obesity and related diseases.</p>
+  </section>
+  <section>
+    <h2>Research Aims</h2>
+    <ul>
+      <li>Can a machine learning regression model accurately predict the obesity percentage using the national walkability score and its component variables?</li>
+    </ul>
+    <p>This is a supervised regression problem, predicting continuous obesity prevalence. Predictors: Walkability components from EPA, Response: Obesity prevalence from CDC PLACES.</p>
+  </section>
+  <section>
+    <h2>Datasets</h2>
+    <ul>
+      <li><b>CDC PLACES:</b> <a href="https://data.cdc.gov/500-Cities-Places/PLACES-Local-Data-for-Better-Health-County-Data-20/swc5-untb/about_data" target="_blank">PLACES: Local Data for Better Health, County Data 2024 release</a> (2021–2022, all 50 states, >200,000 rows). Covers chronic conditions, health behaviors, preventive measures, demographics.</li>
+      <li><b>EPA Walkability Index:</b>
+        <a href="https://catalog.data.gov/dataset/walkability-index8" target="_blank">Data.gov Walkability Index</a>,
+        <a href="https://www.epa.gov/smartgrowth/smart-location-mapping" target="_blank">EPA Smart Location Mapping</a>
+        (2019 census, nationwide tracts, walkability score, land use, employment & household mix, intersection density).
+      </li>
+    </ul>
+  </section>
+  <section>
+    <h2>Methods</h2>
+    <ul>
+      <li><b>Metrics:</b> R², RMSE, and k-fold cross-validation for model evaluation.</li>
+      <li><b>Feature Engineering:</b> Created <i>LocationID</i> for merges, cleaned and aggregated EPA metrics, engineered population category.</li>
+      <li><b>Visualization:</b> Used histograms and scatterplots to inspect distributions, correlation heatmaps for multicollinearity.</li>
+      <li><b>Modeling:</b> Baseline with linear regression (R² ≈ 0.26), upgraded to Gradient Boosting for improved fit (R² ≈ 0.78, RMSE ≈ 1.99).</li>
+    </ul>
+    <p>
+      Following the merge, the EPA data was grouped by LocationID. The walkability component ranks (D2A_Ranked, D2B_Ranked, D3B_Ranked, D4A_Ranked) and the National Walkability Index (NatWalkInd) were aggregated using the mean for each county, while the total population was summed. To improve readability, the walkability component columns were renamed to Land_Use_Mix_Rank, Employment_Diversity_Rank, Street_Connectivity_Rank, and Transit_Access_Rank.
+    </p>
+    <figure>
+      <img src="images/distribution.png" alt="Distribution of Walkability and Obesity Metrics">
+      <figcaption>Distribution of walkability component ranks and obesity prevalence.</figcaption>
+    </figure>
+    <p>
+      This shift allowed me to conclude that the influence of the built environment, specifically Employment Diversity and Transit Access on obesity is strong but non linear, a complexity that simple linear modeling could not capture.
+    </p>
+    <figure>
+      <img src="images/Obesity-WalkIndex-By-State.png" alt="Average Obesity Prevalence vs. Average National Walkability Index by State">
+      <figcaption>Average Obesity Prevalence vs. Average National Walkability Index by State</figcaption>
+    </figure>
+    <figure>
+      <img src="images/Obesity-WalkInd-By-Population.png" alt="Obesity Prevalence vs. Walkability with Regression Lines by Population">
+      <figcaption>Obesity Prevalence vs. National Walkability Index with Regression Lines by Population Category</figcaption>
+    </figure>
+    <p>
+      This validates the use of a more complex, non-linear model to capture the intricate relationships within the data.
+    </p>
+    <figure>
+      <img src="images/linearvsgradient.png" alt="Model Comparison: RMSE and R-squared for Linear vs Gradient Boosting">
+      <figcaption>Model comparison: RMSE (lower is better) and R-squared (higher is better).</figcaption>
+    </figure>
+  </section>
+  <section>
+    <h2>Conclusion</h2>
+    <p>
+      Machine learning (Gradient Boosting) markedly improves prediction of adult obesity prevalence using walkability features versus classic linear regression.
+      Feature rankings highlight the non-linear, interactive role of employment diversity and transit access. Findings support targeted urban design for improved public health outcomes.
+    </p>
+    <div class="divider"></div>
+    <figure>
+      <img src="images/Feature-Importance.png" alt="Feature Importance - Gradient Boosting Regressor">
+      <figcaption>Feature Importance scores from the Gradient Boosting Regressor.</figcaption>
+    </figure>
+  </section>
+  <footer>
+    <p>© 2025 Aaron Nguyen | <a href="https://github.com/AaronNguyen21/Predicting-Obesity-Walkability-ML" target="_blank">GitHub Repo</a></p>
+  </footer>
+</body>
+</html>
